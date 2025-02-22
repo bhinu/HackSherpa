@@ -2,19 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Lightbulb, Bot, Presentation, Trophy } from "lucide-react";
-
-// Map string names to actual Lucide icons
-const iconMap = {
-  lightbulb: Lightbulb,
-  bot: Bot,
-  presentation: Presentation,
-  trophy: Trophy,
-};
+import type { LucideIcon } from "lucide-react";
 
 interface PathProps {
   icons: {
-    iconName: keyof typeof iconMap;
+    Icon: LucideIcon;
     label: string;
     sectionId: string;
   }[];
@@ -33,7 +25,7 @@ export default function AnimatedPath({ icons }: PathProps) {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} className="relative w-full h-full text-gray-900 dark:text-white transition-colors duration-300">
       <svg
         viewBox="0 0 1400 600"
         fill="none"
@@ -54,7 +46,7 @@ export default function AnimatedPath({ icons }: PathProps) {
         <motion.path
           ref={pathRef}
           d="M -100 300 H 200 L 200 400 H 400 L 400 300 H 600 L 600 200 H 800 H 1500"
-          stroke="black"
+          stroke="currentColor"
           strokeWidth="4"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -63,29 +55,54 @@ export default function AnimatedPath({ icons }: PathProps) {
           transition={{ duration: 2.5, ease: "easeInOut" }}
         />
 
-        {/* Labels and Icons */}
-        {icons.map(({ iconName, label, sectionId }, index) => {
-          const IconComponent = iconMap[iconName]; // Get the component from the map
-          const positions = [
-            { x: 200, y: 400 },
-            { x: 400, y: 300 },
-            { x: 600, y: 200 },
-            { x: 800, y: 200 },
-          ][index];
+        {/* Labels with Dark Mode Support */}
+        <motion.g
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <text x="200" y="440" className="text-lg font-medium" textAnchor="middle" fill="currentColor">
+            From Ideation
+          </text>
 
-          return (
-            <motion.g key={sectionId} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 0.5 + index * 0.5, duration: 0.5 }}>
-              <text x={positions.x} y={positions.y + 40} className="text-lg font-medium" textAnchor="middle" fill="black">
-                {label}
-              </text>
+          <text x="400" y="340" className="text-lg font-medium" textAnchor="middle" fill="currentColor">
+            To Discussion
+          </text>
 
-              <motion.a href={`#${sectionId}`} initial={{ scale: 0, opacity: 0 }} animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }} transition={{ delay: 0.5 + index * 0.5, duration: 0.3 }} className="cursor-pointer">
-                <rect x={positions.x - 20} y={positions.y - 20} width="40" height="40" className="fill-black hover:fill-gray-800 transition-colors" style={{ shapeRendering: "crispEdges" }} />
-                {IconComponent && <IconComponent x={positions.x - 10} y={positions.y - 10} className="w-6 h-6 text-white absolute" />}
-              </motion.a>
-            </motion.g>
-          );
-        })}
+          <text x="600" y="240" className="text-lg font-medium" textAnchor="middle" fill="currentColor">
+            To Documentation
+          </text>
+
+          <text x="800" y="240" className="text-lg font-medium" textAnchor="middle" fill="currentColor">
+            To Victory
+          </text>
+        </motion.g>
+
+        {/* Clickable Icons */}
+        {[
+          { x: 200, y: 400, id: "browse" },
+          { x: 400, y: 300, id: "discuss" },
+          { x: 600, y: 200, id: "readme" },
+          { x: 800, y: 200, id: "why-use" },
+        ].map((pos, index) => (
+          <motion.a
+            key={index}
+            href={`#${pos.id}`}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+            transition={{ delay: 0.5 + index * 0.5, duration: 0.3 }}
+            className="cursor-pointer"
+          >
+            <rect
+              x={pos.x - 20}
+              y={pos.y - 20}
+              width="40"
+              height="40"
+              className="fill-current text-gray-900 dark:text-white transition-colors duration-300 hover:text-gray-500"
+              style={{ shapeRendering: "crispEdges" }}
+            />
+          </motion.a>
+        ))}
       </svg>
     </div>
   );

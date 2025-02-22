@@ -3,48 +3,72 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+import { ThemeToggle } from "./theme-toggle"
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState("")
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
+
+      const sections = ["browse", "discuss", "readme", "why-use"]
+      const currentSection = sections.find((section) => {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          return rect.top <= 100 && rect.bottom >= 100
+        }
+        return false
+      })
+      if (currentSection) setActiveSection(currentSection)
     }
+
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled ? "bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent",
+        isScrolled ? "bg-background/60 backdrop-blur-xl border-b border-border/50" : "bg-transparent",
       )}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold">
+        <div className="flex items-center justify-between h-20">
+          <Link href="/" className="text-2xl font-bold gradient-text">
             HackSherpa
           </Link>
 
-          <div className="hidden md:flex space-x-8">
-            <Link href="#browse" className="text-sm hover:text-primary transition-colors">
-              Browse Winning Ideas
-            </Link>
-            <Link href="#discuss" className="text-sm hover:text-primary transition-colors">
-              Discuss Ideas
-            </Link>
-            <Link href="#readme" className="text-sm hover:text-primary transition-colors">
-              Create ReadMe
-            </Link>
-            <Link href="#slideshow" className="text-sm hover:text-primary transition-colors">
-              Create Slideshow
-            </Link>
+          <div className="hidden md:flex items-center space-x-8">
+            {["browse", "discuss", "readme", "slideshow"].map((item) => (
+              <Link
+                key={item}
+                href={`#${item}`}
+                className={cn(
+                  "relative text-sm transition-colors group",
+                  activeSection === item ? "text-foreground" : "text-muted-foreground",
+                )}
+              >
+                <span className="capitalize">{item.replace("-", " ")}</span>
+                <motion.span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"
+                  initial={false}
+                  animate={{ width: activeSection === item ? "100%" : "0%" }}
+                  transition={{ duration: 0.3 }}
+                />
+              </Link>
+            ))}
+            <ThemeToggle />
           </div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
 
