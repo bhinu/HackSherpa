@@ -98,9 +98,16 @@ def generate_readme_with_groq(readme_content):
 
 def save_readme(content, filename="README.md"):
     """
-    Save the generated README content to a file.
+    Save the generated README content to a file in the same folder as the script.
+
     """
-    with open(filename, "w") as file:
+
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Create the full path for the README file
+    readme_path = os.path.join(script_dir, filename)
+
+    with open(readme_path, "w") as file:
         file.write(content)
     print(f"README file saved as {filename}")
 
