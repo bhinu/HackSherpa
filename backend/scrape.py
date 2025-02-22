@@ -1,12 +1,12 @@
 import os
 import requests
-import openai
+from groq import Groq 
 
 # GitHub API base URL
 GITHUB_API_URL = "https://api.github.com"
 
-# OpenAI API key (replace with your own key)
-OPENAI_API_KEY = "your-openai-api-key"
+# Groq API key (replace with your own key or set as environment variable)
+GROQ_API_KEY =
 
 def get_repo_details(owner, repo):
     """
@@ -52,11 +52,12 @@ def read_readme(contents):
     print("Error: README.md not found in the repository.")
     return None
 
-def generate_readme_with_ai(readme_content):
+def generate_readme_with_groq(readme_content):
     """
-    Use OpenAI's GPT API to generate a new README.md based on the existing one.
+    Use Groq's API to generate a new README.md based on the existing one.
     """
-    openai.api_key = OPENAI_API_KEY
+    # Initialize Groq client
+    client = Groq(api_key=GROQ_API_KEY)
 
     # Define the prompt for the AI
     prompt = f"""
@@ -76,18 +77,20 @@ def generate_readme_with_ai(readme_content):
     Make sure the content is clear, concise, and well-structured.
     """
 
-    # Call the OpenAI API
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+    # Call the Groq API
+    chat_completion = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that generates professional README.md files for GitHub repositories."},
-            {"role": "user", "content": prompt}
+            {
+                "role": "user",
+                "content": prompt,
+            }
         ],
-        max_tokens=1000
+        model="llama-3.3-70b-versatile",  # Use the appropriate Groq model
+        max_tokens=1000,
     )
 
     # Extract the generated README content
-    new_readme_content = response.choices[0].message["content"].strip()
+    new_readme_content = chat_completion.choices[0].message.content
     return new_readme_content
 
 def save_readme(content, filename="README.md"):
@@ -128,8 +131,8 @@ def main():
     if not readme_content:
         return
 
-    # Generate a new README.md using AI
-    new_readme_content = generate_readme_with_ai(readme_content)
+    # Generate a new README.md using Groq
+    new_readme_content = generate_readme_with_groq(readme_content)
     if not new_readme_content:
         print("Failed to generate new README.md.")
         return
