@@ -1,7 +1,8 @@
 import os
 import requests
-from groq import Groq 
+from groq import Groq
 from dotenv import load_dotenv
+from ppt_generator import generate_presentation_from_readme  # Import the new module
 
 load_dotenv()
 
@@ -96,20 +97,14 @@ def generate_readme_with_groq(readme_content):
     new_readme_content = chat_completion.choices[0].message.content
     return new_readme_content
 
-def save_readme(content, filename="README.md"):
+def save_readme(content, output_dir, filename="README.md"):
     """
-    Save the generated README content to a file in the same folder as the script.
-
+    Save the generated README content to a file in the specified directory.
     """
-
-    # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Create the full path for the README file
-    readme_path = os.path.join(script_dir, filename)
-
+    readme_path = os.path.join(output_dir, filename)
     with open(readme_path, "w") as file:
         file.write(content)
-    print(f"README file saved as {filename}")
+    print(f"README file saved as {readme_path}")
 
 def main():
     # Input GitHub repository details
@@ -148,7 +143,12 @@ def main():
         return
 
     # Save the new README.md
-    save_readme(new_readme_content)
+    output_dir = os.path.dirname(os.path.abspath(__file__))  # Save in the same folder as the script
+    save_readme(new_readme_content, output_dir)
+
+    # Generate the PowerPoint presentation and PDF
+    template_path = "template.pptx"  # Path to your PowerPoint template (optional)
+    generate_presentation_from_readme(new_readme_content, output_dir, template_path)
 
 if __name__ == "__main__":
     main()
