@@ -1,12 +1,15 @@
 import os
 import requests
 from groq import Groq 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # GitHub API base URL
 GITHUB_API_URL = "https://api.github.com"
 
 # Groq API key (replace with your own key or set as environment variable)
-GROQ_API_KEY =
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 def get_repo_details(owner, repo):
     """
