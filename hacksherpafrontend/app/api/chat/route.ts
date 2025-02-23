@@ -1,28 +1,48 @@
 import { ChatCompletionMessage } from "openai/resources/index.mjs";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
+import { populate } from "@/lib/populate";
+import { getEmbedding } from "@/lib/openai";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
 
 export async function POST(req: Request) {
   try {
+    // Uncomment this only if you update the data set and wanna re-populate the embeddings
+    // await populate();
+    const supabase = await createClient();
+    
     const body = await req.json();
+    console.log("Request body:", body);
     const messages: ChatCompletionMessage[] = body.messages;
+    const userTitle = body.data.projectDetails.title;
+    const userDescription = body.data.projectDetails.description;
+    console.log("User title:", userTitle);
+    console.log("User description:", userDescription);
 
     // Keep conversation context manageable
     const messagesTruncated = messages.slice(-6);
 
     // TODO: substitute with actual project information
+    const searchText = userTitle + " " + userDescription;
+    const embedding = await getEmbedding(searchText);
+    console.log("Embedding:", embedding);
+
+    const {data: documents}  = await supabase.rpc('match_documents',{
+      query_embedding: embedding,
+      match_count: 4
+    })
+
+    console.log("Documents:", documents);
+
     // Structure project information
-    const projectsContext = [
-      "TechTrends: AI-powered tech news discovery platform using Python, ChromeDB, Pinecone, Google Gemini, and GPT-4. Features personalized content recommendations and like/dislike feedback system.",
-      "MadVision: Browser-based drawing application using HTML, CSS, JavaScript, and Python. Features touchless drawing interface with finger tracking and multi-touch gesture support.",
-    ];
+    const projectsContext = documents.map((doc: any) => {
+      return `${doc.primary_category} ${doc.secondary_category} ${doc.summary}`;
+    })
+
+    console.log("Projects context:", projectsContext);
 
     // Create the prompt with context
-    const contextPrompt = `You are an intelligent helper. Here is information about available projects:\n${projectsContext.join(
-      "\n"
-    )}\n\nPlease help with the following questions based on this context:\n${messagesTruncated
-      .map((m) => m.content)
-      .join("\n")}`;
 
     // Stream the response
     const result = streamText({
