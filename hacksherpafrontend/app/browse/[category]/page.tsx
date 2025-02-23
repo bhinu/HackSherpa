@@ -116,7 +116,7 @@ export default function CategoryPage() {
                   <h2 className="text-xl font-semibold text-center text-foreground">
                     Projects in {category}
                   </h2>
-                  <div className="grid lg:grid-cols-2 gap-8">
+                  <div className="grid lg:grid-cols-2 gap-4">
                     <div className="space-y-4">
                       {projects.length > 0 ? (
                         projects.map((project, index) => (
@@ -139,7 +139,7 @@ export default function CategoryPage() {
                                 <img
                                   src={project.image_url}
                                   alt={project.title}
-                                  className="w-full h-40 object-cover rounded-lg mb-4"
+                                  className="w-full h-32 object-cover rounded-lg mb-4"
                                 />
                                 <p className="text-muted-foreground">
                                   {project.description}

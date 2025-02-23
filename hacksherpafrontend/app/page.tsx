@@ -141,7 +141,7 @@ export default function Page() {
           <FeatureSection
             id="discuss"
             title="Discuss Ideas"
-            description="Connect with fellow hackers, share insights, and refine your concepts."
+            description="Analyze Ideas, discuss with chat and RAG, and refine your concepts."
             icon={<Bot className="w-16 h-16 text-primary" />}
             reverse
           />
