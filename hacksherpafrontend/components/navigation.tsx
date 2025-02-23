@@ -47,7 +47,7 @@ export default function Navigation() {
 
           <div className="hidden md:flex items-center space-x-8">
             {[
-              { name: "Browse", path: "/" },
+              { name: "Browse", path: "/browse" },
               { name: "Discuss", path: "/discuss" },
               { name: "Create ReadMe", path: "/create_readme" },
               { name: "Presentation", path: "/presentation" },
