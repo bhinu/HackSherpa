@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import AnimatedPath from "@/components/animated-path"
 import Navigation from "@/components/navigation"
@@ -9,6 +8,8 @@ import CursorEffect from "@/components/cursor-effect"
 import { motion } from "framer-motion"
 import { Lightbulb, Bot, Presentation, Trophy } from "lucide-react"
 import { ScrambleText } from "@/components/text-scramble"
+import Logo from "@/components/logo"
+import FeatureCards from "@/components/feature-cards"
 
 // Enhanced icons data with descriptions
 const icons = [
@@ -91,31 +92,38 @@ export default function Page() {
         <main className="container mx-auto px-4 relative">
           {/* Hero Section */}
           <section className="pt-32 pb-32">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-7xl md:text-8xl font-bold mb-16 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-600 to-primary"
-            >
-              Sherpa
-            </motion.h1>
+            <div className="flex flex-col items-center justify-center gap-8">
+              <Logo />
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-7xl md:text-8xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-600 to-primary"
+              >
+                Sherpa
+              </motion.h1>
+            </div>
 
             <div className="relative h-[800px]">
-                {/* Move the text div above */}
-                <div className="absolute top-8 right-8 max-w-md text-right">
-                  <ScrambleText
-                    text={hoveredSection ? sectionTitles[hoveredSection] : "Your Guide in Scaling Your Next Hackathon"}
-                    className="text-4xl md:text-5xl font-medium leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 mb-4"
-                  />
-                  <ScrambleText
-                    text={hoveredDescription || "A comprehensive guide to help you scale your next hackathon."}
-                    className="text-lg text-gray-700 dark:text-gray-300/80"
-                  />
-                </div>
-
-                {/* AnimatedPath below the text */}
-                <AnimatedPath icons={icons} onHover={handleHover} />
+              {/* Move the text div above */}
+              <div className="absolute top-8 right-8 max-w-md right-left">
+                <ScrambleText
+                  text={hoveredSection ? sectionTitles[hoveredSection] : "Your Guide in Scaling Your Next Hackathon"}
+                  className="text-4xl md:text-5xl font-medium leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 mb-4"
+                />
+                <ScrambleText
+                  text={hoveredDescription || "A comprehensive guide to help you scale your next hackathon."}
+                  className="text-lg text-gray-700 dark:text-gray-300/80"
+                />
               </div>
+
+              {/* AnimatedPath below the text */}
+              <AnimatedPath icons={icons} onHover={handleHover} />
+            </div>
+
+
+            {/* Feature Cards */}
+            <FeatureCards />
           </section>
         </main>
       </div>

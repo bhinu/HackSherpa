@@ -1,84 +1,133 @@
-"use client"
+// app/browse/[category]/page.tsx
+"use client";
 
-import { motion } from "framer-motion"
-import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ProjectCard from "@/components/project-card";
+import Navigation from "@/components/navigation";
 
-interface ProjectCardProps {
-  project: {
-    title: string
-    image_url: string
-    primary_category: string
-    secondary_category: string
-    summary: string
-    winner: boolean
-    project_url: string
+interface Project {
+  id: string;
+  title: string;
+  summary: string;
+  primary_category: string;
+  secondary_category: string;
+  url: string;
+  image_url: string;
+}
+
+async function fetchProjectsByCategory(category: string): Promise<Project[]> {
+  try {
+    const response = await fetch("/api/recommendations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [],
+        data: {
+          projectDetails: {
+            // Use the category as the title for vector search
+            title: category,
+            description: "",
+          },
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch category projects");
+    }
+
+    const data = await response.json();
+    console.log("Fetched Category Projects:", data);
+
+    return data.map((doc: any) => ({
+      id: doc.id.toString(),
+      title: doc.title,
+      summary: doc.summary,
+      primary_category: doc.primary_category,
+      secondary_category: doc.secondary_category,
+      url: doc.url,
+      image_url: doc.image_url,
+    }));
+  } catch (error) {
+    console.error("Error fetching category projects:", error);
+    return [];
   }
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
+export default function CategoryPage() {
+  const router = useRouter();
+  const params = useParams();
+  const category = decodeURIComponent(params.category as string);
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function getProjects() {
+      setIsLoading(true);
+      const fetchedProjects = await fetchProjectsByCategory(category);
+      setProjects(fetchedProjects);
+      setIsLoading(false);
+    }
+    getProjects();
+  }, [category]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.05 }}
-      onClick={() => window.open(project.project_url, "_blank")}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`
-        relative cursor-pointer rounded-xl overflow-hidden
-        bg-white/10 backdrop-blur-sm
-        transition-all duration-300 ease-in-out
-        ${project.winner ? "ring-4 hover:ring-8 ring-yellow-500/50" : ""}
-      `}
-    >
-      {project.winner && (
-        <div
-          className={`
-          absolute top-0 left-1/2 -translate-x-1/2
-          bg-yellow-500 text-black font-semibold
-          px-4 py-1 rounded-b-lg
-          transition-opacity duration-300
-          ${isHovered ? "opacity-100" : "opacity-0"}
-        `}
-        >
-          Winner
-        </div>
-      )}
-
-      <div className="p-4 space-y-4">
-        <div className="flex justify-between items-start">
-          <div className="flex gap-2">
-            <span className="px-2 py-1 rounded-full text-xs bg-white/20 text-white">{project.primary_category}</span>
-            <span className="px-2 py-1 rounded-full text-xs bg-white/20 text-white">{project.secondary_category}</span>
+    <>
+      <Navigation />
+      <div className="relative min-h-screen bg-background dark:bg-background">
+        <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+        <div className="relative container px-4 pt-32 pb-12 mx-auto">
+          <div className="mb-8">
+            <Button variant="ghost" className="hover:bg-primary/10" onClick={() => router.push("/browse")}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Categories
+            </Button>
           </div>
-        </div>
 
-        <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-
-        {project.image_url && (
-          <div className="relative w-full h-48">
-            <Image
-              src={project.image_url || "/placeholder.svg"}
-              alt={project.title}
-              fill
-              className="object-cover rounded-lg"
-            />
+          <div className="space-y-6 text-center mb-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text">{category}</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore projects in {category}
+            </p>
           </div>
-        )}
 
-        <p
-          className={`
-          text-gray-300 transition-all duration-300
-          ${isHovered ? "line-clamp-none" : "line-clamp-3"}
-        `}
-        >
-          {project.summary}
-        </p>
+          {isLoading ? (
+            <div className="text-center text-muted-foreground py-12">Loading projects...</div>
+          ) : (
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {projects.length > 0 ? (
+                projects.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <ProjectCard project={project} />
+                  </motion.div>
+                ))
+              ) : (
+                <div className="text-center text-muted-foreground py-12 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+                  No projects found in this category yet.
+                </div>
+              )}
+            </motion.div>
+          )}
+        </div>
       </div>
-    </motion.div>
-  )
+    </>
+  );
 }
-
