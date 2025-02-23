@@ -35,10 +35,10 @@ const templates = [
 ]
 
 export default function ReadmeGenerator() {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [selectedTemplate, setSelectedTemplate] = useState("standard")
-  const [generatedReadme, setGeneratedReadme] = useState<string | null>(null)
-  const [isReadmeCopied, setIsReadmeCopied] = useState(false)
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedTemplate, setSelectedTemplate] = useState("standard"); // mode
+  const [generatedReadme, setGeneratedReadme] = useState<string | null>(null);
+  const [isReadmeCopied, setIsReadmeCopied] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,9 +49,36 @@ export default function ReadmeGenerator() {
   })
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    const template = templates.find((t) => t.id === selectedTemplate)
-    setGeneratedReadme(template?.content || "")
-  }
+    const template = templates.find((t) => t.id === selectedTemplate);
+    if (!template) {
+      console.error("No template selected");
+      return;
+    }
+
+    const mode = template.id == "standard" ? "default" : "minimal";
+
+    const requestData = {
+      repo_url: values.repoUrl,
+      additional_context: values.additionalContext,
+      mode,
+    };
+
+    const res = fetch("http://127.0.0.1:800/generate_readme", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setGeneratedReadme(data.readme);
+        setCurrentStep(4);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const handleCopyReadme = async () => {
     if (!generatedReadme) return

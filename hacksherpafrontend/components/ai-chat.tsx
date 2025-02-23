@@ -83,7 +83,13 @@ export function AIChat({ projectDetails, relatedProjects }: AIChatProps) {
             </motion.div>
           )}
         </div>
-        <form onSubmit={handleSubmit} className="flex gap-2 flex-shrink-0">
+        <form onSubmit={e=>{
+          handleSubmit(e, {
+            data:{
+              projectDetails
+            }
+          })
+        }} className="flex gap-2 flex-shrink-0">
           <Input
             value={input}
             onChange={handleInputChange}
