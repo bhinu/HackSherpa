@@ -1,8 +1,12 @@
 "use client"
 
+"use client"
+
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
+import Navigation from "@/components/navigation"
+import { Input } from "@/components/ui/input"
 import {
   Smartphone,
   Globe,
@@ -43,7 +47,6 @@ import {
   Zap,
   Car,
 } from "lucide-react"
-import { Input } from "@/components/ui/input"
 
 const categories = [
   { icon: Smartphone, name: "Mobile Apps", description: "Build innovative mobile applications" },
@@ -101,54 +104,57 @@ export default function BrowsePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-purple-900 to-slate-900">
-      <div className="container px-4 py-12 mx-auto">
-        <div className="space-y-6 text-center mb-12">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">Browse Categories</h1>
-          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Explore different technology categories and find the perfect track for your next project
-          </p>
-          <div className="max-w-md mx-auto">
-            <Input
-              type="search"
-              placeholder="Search categories..."
-              className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+    <>
+      <Navigation />
+      <div className="relative min-h-screen bg-background dark:bg-background">
+        <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+        <div className="relative container px-4 pt-32 pb-12 mx-auto">
+          <div className="space-y-6 text-center mb-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text">Browse Categories</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Explore different technology categories and find the perfect track for your next project
+            </p>
+            <div className="max-w-md mx-auto">
+              <Input
+                type="search"
+                placeholder="Search categories..."
+                className="bg-background/50 backdrop-blur-sm border-border/50"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {filteredCategories.map((category, index) => (
-            <motion.div
-              key={category.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative overflow-hidden rounded-lg bg-white/10 p-6 hover:bg-white/[0.15] transition-colors duration-300 cursor-pointer"
-              onClick={() => handleCategoryClick(category.name)}
-            >
-              <div className="flex items-start gap-4">
-                <div className="rounded-full bg-white/10 p-3 group-hover:bg-white/20 transition-colors duration-300">
-                  <category.icon className="w-6 h-6 text-white" />
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {filteredCategories.map((category, index) => (
+              <motion.div
+                key={category.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group relative overflow-hidden rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 p-6 hover:bg-card/80 transition-colors duration-300 cursor-pointer"
+                onClick={() => handleCategoryClick(category.name)}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="rounded-full bg-primary/10 p-3 group-hover:bg-primary/20 transition-colors duration-300">
+                    <category.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-semibold text-foreground">{category.name}</h3>
+                    <p className="text-muted-foreground">{category.description}</p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-white">{category.name}</h3>
-                  <p className="text-gray-300">{category.description}</p>
-                </div>
-              </div>
-              <div className="absolute inset-0 pointer-events-none border border-white/10 rounded-lg group-hover:border-white/20 transition-colors duration-300" />
-            </motion.div>
-          ))}
-        </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
-
