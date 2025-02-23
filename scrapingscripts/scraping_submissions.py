@@ -30,7 +30,8 @@ def get_project_links():
 # Retrieve all project links from the text file
 all_project_links = get_project_links()
 
-# Updated function to retrieve the first .png or .jpg URL (images) and if not found, a youtube video URL
+# Updated function to retrieve the first .png or .jpg URL (images)
+# and if not found, a youtube video URL; otherwise, return "no image"
 def get_first_image_url_after_app_details(soup):
     article = soup.find('article', id="app-details")
     if article:
@@ -50,32 +51,18 @@ def get_first_image_url_after_app_details(soup):
 
 # Function to scrape data from the page
 def scrape_page(url):
-    # Send HTTP request
     response = requests.get(url)
-    
-    # If request is successful
     if response.status_code == 200:
-        # Parse the page content with BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Extract relevant data
         title_elem = soup.find('h1', {'id': 'app-title'})
         title = title_elem.text.strip() if title_elem else "No Title"
         description_elem = soup.find('p', {'class': 'large'})
         description = description_elem.text.strip() if description_elem else "No Description"
-        
-        # Extract "built with" technologies
         built_with_elements = soup.select("span.cp-tag")
         technologies_used = ", ".join([tech.text.strip() for tech in built_with_elements])
-        
-        # Extract Winner label
         winner_element = soup.select_one("div.software-list-content ul.no-bullet span")
         winner_label = winner_element.get_text().strip() if winner_element else "No Award"
-        
-        # Retrieve first image URL after "app-details"
         image_url = get_first_image_url_after_app_details(soup)
-        
-        # Prepare the data, now including the post URL
         post_data = {
             "title": title,
             "description": description,
@@ -84,7 +71,6 @@ def scrape_page(url):
             "image_url": image_url,
             "url": url
         }
-
         return post_data
     else:
         print("Failed to retrieve the page.")
@@ -148,9 +134,7 @@ def generate_summary(post_data):
     """
     
     chat_completion = client.chat.completions.create(
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
+        messages=[{"role": "user", "content": prompt}],
         model="llama-3.3-70b-versatile",
     )
     
@@ -164,27 +148,34 @@ def generate_summary(post_data):
     
     return post_data
 
+# Use the same file path for saving to CSV
+OUTPUT_CSV = "scrapingscripts/projects.csv"
+
 # Function to save data to CSV
 def save_to_csv(post_data):
     df = pd.DataFrame([post_data])
     try:
-        df.to_csv("projects.csv", mode="a", header=not os.path.exists("projects.csv"), index=False)
+        df.to_csv(OUTPUT_CSV, mode="a", header=not os.path.exists(OUTPUT_CSV), index=False)
         print(f"Saved project: {post_data['title']}")
     except Exception as e:
         print(f"Failed to save project: {e}")
 
 # Main function to loop through all projects
 def main():
-    i = 0;
+    counter = 0
     for project_url in all_project_links:
-        i = i + 1
+        counter += 1
+        if counter <= 247:
+            continue
         print(f"Processing: {project_url}")
         post_data = scrape_page(project_url)
         if post_data:
             post_data_with_summary = generate_summary(post_data)
             save_to_csv(post_data_with_summary)
-        if i == 500:
+        if counter % 30 == 0:
+            time.sleep(50)
+        if counter == 500:
             break
-        
+
 if __name__ == '__main__':
     main()
