@@ -1,4 +1,5 @@
 {
   "/discuss/page": "app/discuss/page.js",
+  "/presentation/page": "app/presentation/page.js",
   "/create_readme/page": "app/create_readme/page.js"
 }

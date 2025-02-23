@@ -91,7 +91,34 @@ export default function ReadmeGenerator() {
 
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     const template = templates.find((t) => t.id === selectedTemplate);
-    setGeneratedReadme(template?.content || "");
+    if (!template) {
+      console.error("No template selected");
+      return;
+    }
+
+    const mode = template.id == "standard" ? "default" : "minimal";
+
+    const requestData = {
+      repo_url: values.repoUrl,
+      additional_context: values.additionalContext,
+      mode,
+    };
+
+    const res = fetch("http://127.0.0.1:800/generate_readme", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setGeneratedReadme(data.readme);
+        setCurrentStep(4);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   const handleCopyReadme = async () => {
