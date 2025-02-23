@@ -77,7 +77,7 @@ MIT
 
 export default function ReadmeGenerator() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedTemplate, setSelectedTemplate] = useState("standard");
+  const [selectedTemplate, setSelectedTemplate] = useState("standard"); // mode
   const [generatedReadme, setGeneratedReadme] = useState<string | null>(null);
   const [isReadmeCopied, setIsReadmeCopied] = useState(false);
 
