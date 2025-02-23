@@ -142,7 +142,5 @@ def generate_readme(repo_details, repo_contents, additional_context=None, mode='
     if not new_readme_content:
         print("Failed to generate new README.md.")
         return None
-
-    # Save the new README.md
-    save_readme(new_readme_content)
+    
     return new_readme_content

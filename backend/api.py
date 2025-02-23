@@ -32,7 +32,7 @@ def generate_readme_api():
         readme_content = generate_readme(repo_details, repo_contents, additional_context, mode)
         if not readme_content:
             return jsonify({'error': 'Failed to generate README'}), 500
-
+        """
         # Save README file
         filename = "README.md"
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -40,11 +40,10 @@ def generate_readme_api():
         
         with open(readme_path, 'w') as file:
             file.write(readme_content)
-
+        """
         return jsonify({
             'message': 'README generated successfully',
             'readme': readme_content,
-            'filename': filename
         }), 200
 
     except Exception as e:
