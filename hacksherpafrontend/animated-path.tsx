@@ -56,21 +56,21 @@ export default function AnimatedPath(props: PathProps) {
         {/* Background line (non-animated) */}
         <path d={pathString} stroke="#E5E7EB" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
 
-      <motion.path
-      ref={pathRef}
-      d={pathString}
-      stroke="currentColor"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={{
-        strokeDasharray: pathLength,
-        strokeDashoffset: -pathLength, // start from the right side
-      }}
-      animate={{ strokeDashoffset: 0 }}
-      transition={{ duration: 2.5, ease: "easeInOut" }}
-    />
-
+        {/* Animated line */}
+        <motion.path
+          ref={pathRef}
+          d={pathString}
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            strokeDasharray: pathLength,
+            strokeDashoffset: pathLength,
+          }}
+          animate={{ strokeDashoffset: 0 }}
+          transition={{ duration: 2.5, ease: "easeInOut" }}
+        />
 
         {/* Labels with Dark Mode Support */}
         <motion.g
