@@ -37,7 +37,7 @@ export function AIChat({ projectDetails, relatedProjects }: AIChatProps) {
   const lastMessageIsUser = messages[messages.length - 1]?.role === "user"
 
   return (
-    <Card className="w-full h-[600px] flex flex-col">
+    <Card className="w-full h-[600px] flex flex-col bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))]">
       <CardHeader className="flex-shrink-0">
         <CardTitle>AI Assistant</CardTitle>
       </CardHeader>
@@ -55,7 +55,7 @@ export function AIChat({ projectDetails, relatedProjects }: AIChatProps) {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.2 }}
-                className={`max-w-[80%] p-2 rounded-lg ${m.role === "user" ? "bg-blue-100" : "bg-gray-100"}`}
+                className={`max-w-[80%] p-2 rounded-lg ${m.role === "user" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"}`}
               >
                 {m.content.split("\n").map((line, index) => (
                   <p key={index} className="mb-2 last:mb-0">
@@ -76,7 +76,7 @@ export function AIChat({ projectDetails, relatedProjects }: AIChatProps) {
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.2 }}
-                className="max-w-[80%] p-2 rounded-lg bg-gray-100"
+                className="max-w-[80%] p-2 rounded-lg bg-gray-700 text-white"
               >
                 <p>Thinking...</p>
               </motion.div>
@@ -87,10 +87,12 @@ export function AIChat({ projectDetails, relatedProjects }: AIChatProps) {
           <Input
             value={input}
             onChange={handleInputChange}
-            placeholder="Is there anything you want to ask about?"
-            className="flex-grow"
+            placeholder="Ask anything..."
+            className="flex-grow bg-[hsl(var(--input))] text-[hsl(var(--foreground))] border-[hsl(var(--border))]"
           />
-          <Button type="submit">Send</Button>
+          <Button type="submit" className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
+            Send
+          </Button>
         </form>
       </CardContent>
     </Card>
