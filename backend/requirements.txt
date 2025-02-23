@@ -1,3 +1,5 @@
 requests
 python-dotenv
 groq
+flask
+flask_cors
