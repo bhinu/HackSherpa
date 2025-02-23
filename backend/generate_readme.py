@@ -7,7 +7,7 @@ load_dotenv()
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 
-def generate_readme_with_groq(repo_details, repo_contents, additional_context=None):
+def generate_readme_with_groq(repo_details, repo_contents, additional_context=None, mode='default'):
     """
     Use Groq's API to generate a new README.md based on the repository details, contents, and additional context.
     """
@@ -56,6 +56,52 @@ def generate_readme_with_groq(repo_details, repo_contents, additional_context=No
     Make sure the content is clear, concise, and well-structured.
     """
 
+    if mode == 'minimal':
+        prompt+= """
+      Make the README as minimimal as possible, dont over elaborate. 
+      eg: A clean, minimalist template for simple projects like
+      # Project Name
+      Brief project description
+
+      ## Setup
+      Quick setup instructions
+
+      ## Usage
+      Basic usage example
+
+      ## License
+      MIT
+    """
+    else:
+        prompt+= """
+    Use A comprehensive template suitable for most projects like
+    # Project Name
+    ## Description
+    A brief description of what this project does and who it's for.
+
+    ## Installation
+    ```bash
+    npm install my-project
+    ```
+
+    ## Usage
+    ```javascript
+    import myProject from 'my-project'
+    // Usage example
+    ```
+
+    ## Features
+    - Feature 1
+    - Feature 2
+    - Feature 3
+
+    ## Contributing
+    Pull requests are welcome.
+
+    ## License
+    [MIT](https://choosealicense.com/licenses/mit/
+    """
+
     # Call the Groq API
     chat_completion = client.chat.completions.create(
         messages=[
@@ -87,12 +133,12 @@ def save_readme(content, filename="README.md"):
     print(f"README file saved as {readme_path}")
 
 
-def generate_readme(repo_details, repo_contents, additional_context=None):
+def generate_readme(repo_details, repo_contents, additional_context=None, mode='default'):
     """
     Generate and save a new README.md file.
     """
     # Generate a new README.md using Groq
-    new_readme_content = generate_readme_with_groq(repo_details, repo_contents, additional_context)
+    new_readme_content = generate_readme_with_groq(repo_details, repo_contents, additional_context,mode)
     if not new_readme_content:
         print("Failed to generate new README.md.")
         return None
