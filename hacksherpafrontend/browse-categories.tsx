@@ -86,7 +86,7 @@ const categories = [
   { icon: Car, name: "Transportation Tech", description: "Revolutionize transportation" },
 ]
 
-export default function BrowsePage() {
+export default function Component() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -97,7 +97,7 @@ export default function BrowsePage() {
   )
 
   const handleCategoryClick = (categoryName: string) => {
-    router.push(`/browse/${encodeURIComponent(categoryName)}`)
+    router.push(`/${encodeURIComponent(categoryName)}`)
   }
 
   return (
