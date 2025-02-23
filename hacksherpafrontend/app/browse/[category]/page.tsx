@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -45,9 +45,9 @@ async function fetchProjectsByCategory(category: string): Promise<Project[]> {
     }
 
     const data = await response.json();
+    console.log("Fetched Projects:", data);
 
-    // Limit the returned projects to 4 items (or any desired limit)
-    return data.slice(0, 4).map((doc: any) => ({
+    return data.map((doc: any) => ({
       id: doc.id.toString(),
       title: doc.title,
       description: doc.summary,
@@ -64,22 +64,25 @@ async function fetchProjectsByCategory(category: string): Promise<Project[]> {
 export default function CategoryPage() {
   const router = useRouter();
   const params = useParams();
-  // Memoize the decoded category so it doesn't trigger repeated requests
-  const category = useMemo(
-    () => (params.category ? decodeURIComponent(params.category as string) : ""),
-    [params.category]
-  );
+  // Memoize the decoded category so that it doesn't change on every render.
+  const category = useMemo(() => {
+    return params.category ? decodeURIComponent(params.category as string) : "";
+  }, [params.category]);
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    if (!category) return;
     async function getProjects() {
-      setIsLoading(true);
-      const fetchedProjects = await fetchProjectsByCategory(category);
-      setProjects(fetchedProjects);
-      setIsLoading(false);
+      if (category) {
+        setIsLoading(true);
+        setShowResults(false);
+        const fetchedProjects = await fetchProjectsByCategory(category);
+        setProjects(fetchedProjects);
+        setIsLoading(false);
+        setShowResults(true);
+      }
     }
     getProjects();
   }, [category]);
@@ -99,56 +102,76 @@ export default function CategoryPage() {
             >
               Back to Categories
             </Button>
-            <h1 className="text-4xl font-bold mb-8 gradient-text text-center">{category}</h1>
-            {isLoading ? (
-              <div className="text-center text-muted-foreground py-12">Loading projects...</div>
-            ) : (
-              <motion.div
-                className="grid lg:grid-cols-2 gap-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {projects.length > 0 ? (
-                  projects.map((project, index) => (
-                    <motion.div
-                      key={project.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      <Card className="bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/80 transition-colors duration-300">
-                        <CardHeader>
-                          <CardTitle className="text-foreground">{project.title}</CardTitle>
-                          <CardDescription>{project.category}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <img
-                            src={project.image_url}
-                            alt={project.title}
-                            className="w-full h-40 object-cover rounded-lg mb-4"
-                          />
-                          <p className="text-muted-foreground">{project.description}</p>
-                        </CardContent>
-                        <CardFooter>
-                          <a
-                            href={project.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:underline"
+            <h1 className="text-4xl font-bold mb-8 gradient-text text-center">
+              {category}
+            </h1>
+            <AnimatePresence>
+              {showResults && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="space-y-8"
+                >
+                  <h2 className="text-xl font-semibold text-center text-foreground">
+                    Projects in {category}
+                  </h2>
+                  <div className="grid lg:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      {projects.length > 0 ? (
+                        projects.map((project, index) => (
+                          <motion.div
+                            key={project.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
                           >
-                            View Project
-                          </a>
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="text-center text-muted-foreground py-12 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
-                    No projects found in this category yet.
+                            <Card className="bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/80 transition-colors duration-300">
+                              <CardHeader>
+                                <CardTitle className="text-foreground">
+                                  {project.title}
+                                </CardTitle>
+                                <CardDescription>
+                                  {project.category}
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <img
+                                  src={project.image_url}
+                                  alt={project.title}
+                                  className="w-full h-40 object-cover rounded-lg mb-4"
+                                />
+                                <p className="text-muted-foreground">
+                                  {project.description}
+                                </p>
+                              </CardContent>
+                              <CardFooter>
+                                <a
+                                  href={project.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hover:underline"
+                                >
+                                  View Project
+                                </a>
+                              </CardFooter>
+                            </Card>
+                          </motion.div>
+                        ))
+                      ) : (
+                        <p className="text-center text-muted-foreground">
+                          No projects found. Try adjusting your search.
+                        </p>
+                      )}
+                    </div>
                   </div>
-                )}
-              </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {isLoading && (
+              <div className="text-center text-muted-foreground py-12">
+                Loading projects...
+              </div>
             )}
           </div>
         </main>
