@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react"
 export class TextScramble {
   el: HTMLElement
   chars: string
-  queue: Array<{
+  queue: Array <{
     from: string
     to: string
     start: number
@@ -18,7 +18,7 @@ export class TextScramble {
 
   constructor(el: HTMLElement) {
     this.el = el
-    this.chars = "!<>-_\\/[]😍{}—=+*^?#"
+    this.chars = "!<>-_\\/[]{}—=+*^?#"
     this.queue = []
     this.frame = 0
     this.frameRequest = 0
@@ -103,4 +103,3 @@ export function ScrambleText({ text, className = "" }: ScrambleTextProps) {
     </div>
   )
 }
-
