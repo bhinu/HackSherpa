@@ -49,8 +49,7 @@ export default function Navigation() {
             {[
               { name: "Browse", path: "/browse" },
               { name: "Discuss", path: "/discuss" },
-              { name: "Create ReadMe", path: "/create_readme" },
-              { name: "Presentation", path: "/presentation" },
+              { name: "Create ReadMe", path: "/create_readme" }
             ].map(({ name, path }) => (
               <Link
                 key={path}

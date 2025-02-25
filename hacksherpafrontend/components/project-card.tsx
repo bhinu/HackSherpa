@@ -1,84 +1,52 @@
-"use client"
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 
-import { motion } from "framer-motion"
-import Image from "next/image"
-import { useState } from "react"
+export interface Project {
+  id: string;
+  title: string;
+  summary: string;
+  primary_category: string;
+  secondary_category: string;
+  url: string;
+  image_url: string;
+}
 
 interface ProjectCardProps {
-  project: {
-    title: string
-    image_url: string
-    primary_category: string
-    secondary_category: string
-    summary: string
-    winner: boolean
-    project_url: string
-  }
+  project: Project;
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-
+const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.05 }}
-      onClick={() => window.open(project.project_url, "_blank")}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`
-        relative cursor-pointer rounded-xl overflow-hidden
-        bg-white/10 backdrop-blur-sm
-        transition-all duration-300 ease-in-out
-        ${project.winner ? "ring-4 hover:ring-8 ring-yellow-500/50" : ""}
-      `}
-    >
-      {project.winner && (
-        <div
-          className={`
-          absolute top-0 left-1/2 -translate-x-1/2
-          bg-yellow-500 text-black font-semibold
-          px-4 py-1 rounded-b-lg
-          transition-opacity duration-300
-          ${isHovered ? "opacity-100" : "opacity-0"}
-        `}
+    <Card className="bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/80 transition-colors duration-300">
+      <CardHeader>
+        <CardTitle className="text-foreground">{project.title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <img
+          src={project.image_url}
+          alt={project.title}
+          className="w-full h-40 object-cover rounded-lg mb-4"
+        />
+        <p className="text-muted-foreground">{project.summary}</p>
+      </CardContent>
+      <CardFooter>
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
         >
-          Winner
-        </div>
-      )}
+          View Project
+        </a>
+      </CardFooter>
+    </Card>
+  );
+};
 
-      <div className="p-4 space-y-4">
-        <div className="flex justify-between items-start">
-          <div className="flex gap-2">
-            <span className="px-2 py-1 rounded-full text-xs bg-white/20 text-white">{project.primary_category}</span>
-            <span className="px-2 py-1 rounded-full text-xs bg-white/20 text-white">{project.secondary_category}</span>
-          </div>
-        </div>
-
-        <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-
-        {project.image_url && (
-          <div className="relative w-full h-48">
-            <Image
-              src={project.image_url || "/placeholder.svg"}
-              alt={project.title}
-              fill
-              className="object-cover rounded-lg"
-            />
-          </div>
-        )}
-
-        <p
-          className={`
-          text-gray-300 transition-all duration-300
-          ${isHovered ? "line-clamp-none" : "line-clamp-3"}
-        `}
-        >
-          {project.summary}
-        </p>
-      </div>
-    </motion.div>
-  )
-}
-
+export default ProjectCard;
