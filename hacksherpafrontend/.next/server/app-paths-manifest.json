@@ -1,5 +1,15 @@
 {
+<<<<<<< HEAD
   "/browse/page": "app/browse/page.js",
   "/create_readme/page": "app/create_readme/page.js",
   "/page": "app/page.js"
+=======
+  "/api/recommendations/route": "app/api/recommendations/route.js",
+  "/api/chat/route": "app/api/chat/route.js",
+  "/browse/[category]/page": "app/browse/[category]/page.js",
+  "/browse/page": "app/browse/page.js",
+  "/page": "app/page.js",
+  "/create_readme/page": "app/create_readme/page.js",
+  "/discuss/page": "app/discuss/page.js"
+>>>>>>> 160717fef5b474d5181143fdf6c5d76a4468ddef
 }
