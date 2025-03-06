@@ -5,6 +5,7 @@
 
 .env
 
+hacksherpafrontend/.next/*
 .next/*
 
 # User-specific files
