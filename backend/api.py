@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from scrape_github import scrape_repo
-from generate_readme import generate_readme
+from .scrape_github import scrape_repo
+from .generate_readme import generate_readme
 import os
 
 app = Flask(__name__)
