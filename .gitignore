@@ -403,3 +403,19 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 .vercel
+hacksherpafrontend/.next/app-build-manifest.json
+hacksherpafrontend/.next/build-manifest.json
+hacksherpafrontend/.next/trace
+hacksherpafrontend/.next/cache/webpack/client-development/1.pack.gz
+hacksherpafrontend/.next/cache/webpack/client-development/index.pack.gz
+hacksherpafrontend/.next/cache/webpack/client-development/index.pack.gz.old
+hacksherpafrontend/.next/cache/webpack/server-development/0.pack.gz
+hacksherpafrontend/.next/cache/webpack/server-development/index.pack.gz
+hacksherpafrontend/.next/server/app-paths-manifest.json
+hacksherpafrontend/.next/server/interception-route-rewrite-manifest.js
+hacksherpafrontend/.next/server/middleware-build-manifest.js
+hacksherpafrontend/.next/server/middleware-react-loadable-manifest.js
+hacksherpafrontend/.next/server/next-font-manifest.js
+hacksherpafrontend/.next/server/pages-manifest.json
+hacksherpafrontend/.next/server/server-reference-manifest.js
+hacksherpafrontend/.next/server/server-reference-manifest.json
