@@ -5,7 +5,7 @@
 
 .env
 
-.next/
+.next/*
 
 # User-specific files
 *.rsuser
@@ -402,3 +402,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+.vercel

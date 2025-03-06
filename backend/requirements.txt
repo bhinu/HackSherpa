@@ -1,5 +1,5 @@
+Flask
+flask-cors
 requests
-python-dotenv
-groq
-flask
-flask_cors
+beautifulsoup4
+gitpython

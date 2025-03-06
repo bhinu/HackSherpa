@@ -20,7 +20,7 @@ def generate_readme_api():
     
     repo_url = data['repo_url']
     additional_context = data.get('additional_context', None)
-    mode = data.get('mode',"default")
+    mode = data.get('mode', "default")
 
     try:
         # Scrape repository data
@@ -32,15 +32,14 @@ def generate_readme_api():
         readme_content = generate_readme(repo_details, repo_contents, additional_context, mode)
         if not readme_content:
             return jsonify({'error': 'Failed to generate README'}), 500
-        """
-        # Save README file
-        filename = "README.md"
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        readme_path = os.path.join(script_dir, filename)
         
-        with open(readme_path, 'w') as file:
-            file.write(readme_content)
-        """
+        # Uncomment if you really want to write README to disk:
+        # filename = "README.md"
+        # script_dir = os.path.dirname(os.path.abspath(__file__))
+        # readme_path = os.path.join(script_dir, filename)
+        # with open(readme_path, 'w') as file:
+        #     file.write(readme_content)
+
         return jsonify({
             'message': 'README generated successfully',
             'readme': readme_content,
@@ -49,5 +48,10 @@ def generate_readme_api():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=800, debug=True)
+# WSGI handler for Vercel (serverless)
+def handler(environ, start_response):
+    return app.wsgi_app(environ, start_response)
+
+# Remove or comment out the usual Flask entry point:
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=800, debug=True)

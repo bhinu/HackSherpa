@@ -1,4 +1,5 @@
 // /app/api/recommendations/route.ts
+
 import { getEmbedding } from "@/lib/openai";
 import { createClient } from "@/utils/supabase/client";
 

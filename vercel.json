@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/api.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.10"
+      }
+    },
+    {
+      "src": "hacksherpafrontend/next.config.js",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/pyapi/(.*)",
+      "dest": "backend/api.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "hacksherpafrontend/$1"
+    }
+  ]
+}
