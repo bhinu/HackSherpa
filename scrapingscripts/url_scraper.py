@@ -11,10 +11,10 @@ headers = {
 }
 
 def get_project_links():
-    """Iterates through up to 80 pages and collects all unique project links."""
+    """Iterates through pages (up to MAX_PAGES) and collects all unique project links."""
     project_links = set()  # Using a set to prevent duplicates
     
-    for page in range(1, MAX_PAGES + 1):  # Iterate up to 80 pages
+    for page in range(1, MAX_PAGES + 1):  # Iterate through pages
         url = BASE_URL.format(page)
         print(f"Scraping: {url}")
         response = requests.get(url, headers=headers)
@@ -36,7 +36,7 @@ def get_project_links():
 
     return list(project_links)  # Convert set back to list for further processing
 
-# Extract all unique project links (up to 80 pages)
+# Extract all unique project links (pages up to MAX_PAGES)
 all_project_links = get_project_links()
 
 # Save to CSV
